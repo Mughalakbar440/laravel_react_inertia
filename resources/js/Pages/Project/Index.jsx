@@ -1,47 +1,111 @@
 import Pagination from "@/Components/Pagination";
+import SelectInput from "@/Components/SelectInput";
+import TextInput from "@/Components/TextInput";
 import { PROJECT_STATUS_CLASS_MAP, PROJECT_STATUS_TEXT_MAP } from "@/constants";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import React from "react";
-const Index = ({ projects }) => {
+import TableHeading from "@/Components/TableHeading";
+const Index = ({ projects, querParams = null }) => {
+    querParams = querParams || {};
+    const searchFieldChanged = (name, value) => {
+        if (value) {
+            querParams[name] = value;
+        } else {
+            delete querParams[name];
+        }
+        router.get(route("project.index", querParams));
+    };
+    const onKeyPress = (name, e) => {
+        if (e.key === "Enter") {
+            searchFieldChanged(name, e.target.value);
+        }
+    };
+    const sortChanged = (name) => {
+        if (name === querParams.sort_field) {
+            if (querParams.sort_direction === "asc") {
+                querParams.sort_direction = "desc";
+            } else {
+                querParams.sort_direction = "asc";
+            }
+        } else {
+            querParams.sort_field = name;
+            querParams.sort_direction = "asc";
+        }
+        router.get(route("project.index", querParams));
+    };
     return (
         <>
             <AuthenticatedLayout
                 header={
+                    <div className="flex  justify-between items-center">
+
                     <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
                         Projects
                     </h2>
+                    <Link href={route('project.create')} className="bg-emerald-500 py-1 px-3 text-white rounded shadow transition-all hover:bg-emerald-600"> Add Project</Link>
+                    </div>
                 }
             >
                 <Head title="Projects" />
                 <div className="py-12">
                     <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                        <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
+                        <div className="overflow-hidden bg-gray-900 shadow-sm sm:rounded-lg dark:bg-gray-800">
                             <div className="p-6 text-gray-900 dark:text-gray-100">
                                 <div className="overflow-x-auto">
-                                    <table className="min-w-full bg-white border border-gray-300 rounded-lg">
+                                    <table className="min-w-full bg-gray-900 border border-gray-700 rounded-lg">
                                         <thead>
-                                            <tr className="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
-                                                <th className="py-3 px-6 text-left">
+                                            <tr className="bg-gray-800 text-gray-500 uppercase text-sm leading-normal">
+                                                <TableHeading
+                                                    name="id"
+                                                    sortable
+                                                    sortChanged={sortChanged}
+                                                    sort_field={querParams.sort_field}
+                                                    sort_direction={querParams.sort_direction  }
+                                                >
                                                     ID
-                                                </th>
+                                                </TableHeading>
+
                                                 <th className="py-3 px-6 text-left">
                                                     Image
                                                 </th>
-                                                <th className="py-3 px-6 text-center">
-                                                    Name
-                                                </th>
-                                                <th className="py-3 px-6 text-center">
-                                                    Status
-                                                </th>
-                                                <th className="py-3 px-6 text-center">
-                                                    Create Date
-                                                </th>
-                                                <th className="py-3 px-6 text-center">
-                                                    Due Date
-                                                </th>
+                                                <TableHeading
+                                                    name="name"
+                                                    sortable
+                                                    sortChanged={sortChanged}
+                                                    sort_field={querParams.sort_field}
+                                                    sort_direction={querParams.sort_direction  }
+                                                >Name
+                                                </TableHeading>
+                                                <TableHeading
+                                                    name="status"
+                                                    sortable
+                                                    sortChanged={sortChanged}
+                                                    sort_field={querParams.sort_field}
+                                                    sort_direction={querParams.sort_direction  }
+                                                >
+                                                  Status
+                                                </TableHeading>
+                                                <TableHeading
+                                                    name="created_at"
+                                                    sortable
+                                                    sortChanged={sortChanged}
+                                                    sort_field={querParams.sort_field}
+                                                    sort_direction={querParams.sort_direction  }
+                                                >
+                                                   Created date
+                                                </TableHeading>
+                                                <TableHeading
+                                                    name="due_date"
+                                                    sortable
+                                                    sortChanged={sortChanged}
+                                                    sort_field={querParams.sort_field}
+                                                    sort_direction={querParams.sort_direction  }
+                                                >
+                                                 Due date
+                                                </TableHeading>
                                                 <th className="py-3 px-6 text-center">
                                                     Created by
                                                 </th>
@@ -50,12 +114,70 @@ const Index = ({ projects }) => {
                                                 </th>
                                             </tr>
                                         </thead>
-                                        <tbody className="text-gray-600 text-sm font-light">
+                                        <thead>
+                                            <tr className="bg-gray-800 text-gray-200 uppercase text-sm leading-normal">
+                                                <th className="py-3 px-6 text-left"></th>
+                                                <th className="py-3 px-6 text-left"></th>
+                                                <th className="py-3 px-6 text-center">
+                                                    <TextInput
+                                                        className="w-full"
+                                                        defaultValue={
+                                                            querParams.name
+                                                        }
+                                                        placeholder="Project name"
+                                                        onBlur={(e) =>
+                                                            searchFieldChanged(
+                                                                "name",
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        onKeyPress={(e) =>
+                                                            onKeyPress(
+                                                                "name",
+                                                                e
+                                                            )
+                                                        }
+                                                    />
+                                                </th>
+                                                <th className="py-3 px-6 text-center">
+                                                    <SelectInput
+                                                        defaultValue={
+                                                            querParams.status
+                                                        }
+                                                        className="w-full"
+                                                        onChange={(e) =>
+                                                            searchFieldChanged(
+                                                                "status",
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                    >
+                                                        <option value="">
+                                                            Select option
+                                                        </option>
+                                                        <option value="pending">
+                                                            Pending
+                                                        </option>
+                                                        <option value="in_progres">
+                                                            In Progress
+                                                        </option>
+                                                        <option value="completed">
+                                                            Compeleted
+                                                        </option>
+                                                    </SelectInput>
+                                                </th>
+                                                <th className="py-3 px-6 text-center"></th>
+                                                <th className="py-3 px-6 text-center"></th>
+                                                <th className="py-3 px-6 text-center"></th>
+                                                <th className="py-3 px-6 text-center"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="text-gray-400 text-sm font-light">
                                             {projects.data.map(
                                                 (project, key) => (
                                                     <tr
                                                         key={key}
-                                                        className="border-b border-gray-300 hover:bg-gray-100"
+                                                        className="border-b border-gray-700 hover:bg-gray-800"
                                                     >
                                                         <td className="py-3 px-6 text-left whitespace-nowrap">
                                                             {project.id}
@@ -71,12 +193,29 @@ const Index = ({ projects }) => {
                                                                 className="rounded-full h-10 w-10 object-cover"
                                                             />
                                                         </td>
-                                                        <td className="py-3 px-6 text-center">
+                                                        <th className="py-3 px-6 text-center hover:underline text-white text-nowrap">
+                                                            <Link href={route("project.show",project.id)}>
                                                             {project.name}
+                                                            </Link>
+                                                        </th>
+                                                        <td className="py-3 px-6 text-center">
+                                                            <span
+                                                                className={
+                                                                    "px-2 py-1 rounded text-white " +
+                                                                    PROJECT_STATUS_CLASS_MAP[
+                                                                        project
+                                                                            .status
+                                                                    ]
+                                                                }
+                                                            >
+                                                                {
+                                                                    PROJECT_STATUS_TEXT_MAP[
+                                                                        project
+                                                                            .status
+                                                                    ]
+                                                                }
+                                                            </span>
                                                         </td>
-                                                       <td>
-                                                        <span className={"px-2 py-1 rounded text-white "+PROJECT_STATUS_CLASS_MAP[project.status]}> {PROJECT_STATUS_TEXT_MAP[project.status]}</span>
-                                                       </td>
                                                         <td className="py-3 px-6 text-center">
                                                             {project.created_at}
                                                         </td>
@@ -91,12 +230,31 @@ const Index = ({ projects }) => {
                                                             }
                                                         </td>
                                                         <td className="py-3 px-6 text-center flex space-x-4">
-                                                            <Link href={route('project.edit',project.id)} className="bg-blue-500 text-white px-3 py-1 rounded">
-                                                            <FontAwesomeIcon icon={faEdit} />
+                                                            <Link
+                                                                href={route(
+                                                                    "project.edit",
+                                                                    project.id
+                                                                )}
+                                                                className="bg-blue-500 text-white px-3 py-1 rounded"
+                                                            >
+                                                                <FontAwesomeIcon
+                                                                    icon={
+                                                                        faEdit
+                                                                    }
+                                                                />
                                                             </Link>
-                                                            <Link href={route('project.destroy',project.id)} className="bg-red-500 text-white px-3 py-1  rounded">
-                                                            <FontAwesomeIcon icon={faTrash} />
-
+                                                            <Link
+                                                                href={route(
+                                                                    "project.destroy",
+                                                                    project.id
+                                                                )}
+                                                                className="bg-red-500 text-white px-3 py-1 rounded"
+                                                            >
+                                                                <FontAwesomeIcon
+                                                                    icon={
+                                                                        faTrash
+                                                                    }
+                                                                />
                                                             </Link>
                                                         </td>
                                                     </tr>
@@ -104,7 +262,7 @@ const Index = ({ projects }) => {
                                             )}
                                         </tbody>
                                     </table>
-                                    <Pagination links={projects.meta.links}/> 
+                                    <Pagination links={projects.meta.links} />
                                 </div>
                             </div>
                         </div>
