@@ -1,9 +1,10 @@
+import DangerButton from "@/Components/DangerButton";
 import InputLabel from "@/Components/InputLabel";
 import SelectInput from "@/Components/SelectInput";
 import TextAreaInput from "@/Components/TextAreaInput";
 import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import React from "react";
 
 const Create = () => {
@@ -138,11 +139,14 @@ const Create = () => {
                                 </div>
 
                                 {/* Submit Button */}
-                                <div className="mt-6">
+                                <div className="mt-6 flex justify-end gap-1">
+                                    <DangerButton
+                                    ><Link href={route("project.index")}> Cancel</Link>
+
+                                    </DangerButton>
                                     <button
                                         type="submit"
-                                        className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-                                    >
+                                        className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
                                         Add Project
                                     </button>
                                 </div>
