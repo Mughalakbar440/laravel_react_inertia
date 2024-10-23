@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateProjectRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class UpdateProjectRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -19,10 +20,15 @@ class UpdateProjectRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+    public function rules()
     {
         return [
-            //
+            'name' => 'required|string|max:255',
+            'status' => 'required|string|in:pending,in_progres,completed', // Ensure the status values match
+            'description' => 'required|string',
+            'due_date' => 'required|date',
+            'image_path' => 'nullable|image|max:2048', // Optional image
         ];
     }
+
 }

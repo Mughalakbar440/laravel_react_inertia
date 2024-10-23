@@ -9,7 +9,7 @@ import React from "react";
 
 const Create = () => {
     const { data, setData, post, errors, reset } = useForm({
-        image: null, // For file input
+        image: "", // For file input
         name: "",
         status: "",
         description: "",
@@ -17,7 +17,7 @@ const Create = () => {
     });
 
     const handleFileChange = (e) => {
-        setData("image", e.target.files[0]);
+        setData("image_path", e.target.files[0]);
     };
 
     const onSubmit = (e) => {
@@ -129,6 +129,7 @@ const Create = () => {
                                         id="project_image_path"
                                         type="file"
                                         onChange={handleFileChange}
+                                        required
                                         className="mt-1 block w-full text-sm text-gray-200 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
                                     />
                                     {errors.image && (

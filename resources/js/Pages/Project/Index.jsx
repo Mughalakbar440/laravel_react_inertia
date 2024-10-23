@@ -8,7 +8,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Head, Link, router } from "@inertiajs/react";
 import React from "react";
 import TableHeading from "@/Components/TableHeading";
-const Index = ({ projects, querParams = null }) => {
+import { Button } from "@headlessui/react";
+const Index = ({ projects, querParams = null, success }) => {
     querParams = querParams || {};
     const searchFieldChanged = (name, value) => {
         if (value) {
@@ -36,24 +37,42 @@ const Index = ({ projects, querParams = null }) => {
         }
         router.get(route("project.index", querParams));
     };
+    const deleteProject = (e) => {
+        e.preventDefault;
+        if (!window.confirm("Are you sure want to delete the projects?")) {
+            return;
+        }
+        router.delete(route("project.destroy", e.id));
+    };
+
     return (
         <>
             <AuthenticatedLayout
                 header={
                     <div className="flex  justify-between items-center">
-
-                    <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                        Projects
-                    </h2>
-                    <Link href={route('project.create')} className="bg-emerald-500 py-1 px-3 text-white rounded shadow transition-all hover:bg-emerald-600"> Add Project</Link>
+                        <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
+                            Projects
+                        </h2>
+                        <Link
+                            href={route("project.create")}
+                            className="bg-emerald-500 py-1 px-3 text-white rounded shadow transition-all hover:bg-emerald-600"
+                        >
+                            Add Project
+                        </Link>
                     </div>
                 }
             >
                 <Head title="Projects" />
+
                 <div className="py-12">
                     <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                         <div className="overflow-hidden bg-gray-900 shadow-sm sm:rounded-lg dark:bg-gray-800">
                             <div className="p-6 text-gray-900 dark:text-gray-100">
+                                {success && (
+                                    <div className="bg-emerald-500 text-white font-semibold py-2 px-4 rounded-lg mb-4">
+                                        {success}
+                                    </div>
+                                )}
                                 <div className="overflow-x-auto">
                                     <table className="min-w-full bg-gray-900 border border-gray-700 rounded-lg">
                                         <thead>
@@ -62,8 +81,12 @@ const Index = ({ projects, querParams = null }) => {
                                                     name="id"
                                                     sortable
                                                     sortChanged={sortChanged}
-                                                    sort_field={querParams.sort_field}
-                                                    sort_direction={querParams.sort_direction  }
+                                                    sort_field={
+                                                        querParams.sort_field
+                                                    }
+                                                    sort_direction={
+                                                        querParams.sort_direction
+                                                    }
                                                 >
                                                     ID
                                                 </TableHeading>
@@ -75,36 +98,53 @@ const Index = ({ projects, querParams = null }) => {
                                                     name="name"
                                                     sortable
                                                     sortChanged={sortChanged}
-                                                    sort_field={querParams.sort_field}
-                                                    sort_direction={querParams.sort_direction  }
-                                                >Name
+                                                    sort_field={
+                                                        querParams.sort_field
+                                                    }
+                                                    sort_direction={
+                                                        querParams.sort_direction
+                                                    }
+                                                >
+                                                    Name
                                                 </TableHeading>
                                                 <TableHeading
                                                     name="status"
                                                     sortable
                                                     sortChanged={sortChanged}
-                                                    sort_field={querParams.sort_field}
-                                                    sort_direction={querParams.sort_direction  }
+                                                    sort_field={
+                                                        querParams.sort_field
+                                                    }
+                                                    sort_direction={
+                                                        querParams.sort_direction
+                                                    }
                                                 >
-                                                  Status
+                                                    Status
                                                 </TableHeading>
                                                 <TableHeading
                                                     name="created_at"
                                                     sortable
                                                     sortChanged={sortChanged}
-                                                    sort_field={querParams.sort_field}
-                                                    sort_direction={querParams.sort_direction  }
+                                                    sort_field={
+                                                        querParams.sort_field
+                                                    }
+                                                    sort_direction={
+                                                        querParams.sort_direction
+                                                    }
                                                 >
-                                                   Created date
+                                                    Created date
                                                 </TableHeading>
                                                 <TableHeading
                                                     name="due_date"
                                                     sortable
                                                     sortChanged={sortChanged}
-                                                    sort_field={querParams.sort_field}
-                                                    sort_direction={querParams.sort_direction  }
+                                                    sort_field={
+                                                        querParams.sort_field
+                                                    }
+                                                    sort_direction={
+                                                        querParams.sort_direction
+                                                    }
                                                 >
-                                                 Due date
+                                                    Due date
                                                 </TableHeading>
                                                 <th className="py-3 px-6 text-center">
                                                     Created by
@@ -194,8 +234,13 @@ const Index = ({ projects, querParams = null }) => {
                                                             />
                                                         </td>
                                                         <th className="py-3 px-6 text-center hover:underline text-white text-nowrap">
-                                                            <Link href={route("project.show",project.id)}>
-                                                            {project.name}
+                                                            <Link
+                                                                href={route(
+                                                                    "project.show",
+                                                                    project.id
+                                                                )}
+                                                            >
+                                                                {project.name}
                                                             </Link>
                                                         </th>
                                                         <td className="py-3 px-6 text-center">
@@ -243,11 +288,12 @@ const Index = ({ projects, querParams = null }) => {
                                                                     }
                                                                 />
                                                             </Link>
-                                                            <Link
-                                                                href={route(
-                                                                    "project.destroy",
-                                                                    project.id
-                                                                )}
+                                                            <Button
+                                                                onClick={(e) =>
+                                                                    deleteProject(
+                                                                        project
+                                                                    )
+                                                                }
                                                                 className="bg-red-500 text-white px-3 py-1 rounded"
                                                             >
                                                                 <FontAwesomeIcon
@@ -255,7 +301,7 @@ const Index = ({ projects, querParams = null }) => {
                                                                         faTrash
                                                                     }
                                                                 />
-                                                            </Link>
+                                                            </Button>
                                                         </td>
                                                     </tr>
                                                 )

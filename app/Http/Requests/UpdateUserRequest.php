@@ -11,7 +11,7 @@ class UpdateUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -19,10 +19,20 @@ class UpdateUserRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
+
     public function rules(): array
     {
+        $userId = $this->user()->id; // Get the current user's ID;
         return [
-            //
+            "name" => ["required", "string", "max:255"], // Ensures name is required, a string, and max 255 characters
+            "email" => [
+                "required",
+                "email",
+                "max:255",
+                "unique:users,email," . $userId // Ensure the email is unique, excluding the current user's email
+            ],
+            "password" => ["nullable", "string", "min:8", "confirmed"], // Password is optional for updates
         ];
+        
     }
 }

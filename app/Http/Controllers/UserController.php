@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
@@ -13,7 +14,17 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        $query = User::query();
+        if (request("name")) {
+            $query->where("name", "like", "%" . request("name") . "%");
+        }
+        $projects = $query->paginate(10)->onEachSide(1);
+        return inertia("User/Index", [
+            "users" => UserResource::collection($projects),
+            "querParams" => request()->query() ?: null,
+            'success'=>session('success'),
+        ]);
+
     }
 
     /**
@@ -21,7 +32,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return inertia("User/create");
     }
 
     /**
@@ -29,7 +40,9 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        //
+        User::create($request->validated());
+        return to_route('user.index')->with('success','User Add Successfully');
+
     }
 
     /**
@@ -37,7 +50,6 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        //
     }
 
     /**
@@ -45,7 +57,10 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        //
+        return inertia('User/Edit', [
+            'user'=> new UserResource($user),
+        ]);
+        
     }
 
     /**
@@ -53,7 +68,9 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        //
+         $user->update($request->validated());
+        return to_route('user.index')->with('success','Data successfully updated');
+
     }
 
     /**
@@ -61,6 +78,8 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        $name = $user->name;
+        $user->delete();
+        return to_route('user.index')->with('success',$name.' is deleted successfully');
     }
 }
