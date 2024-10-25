@@ -11,10 +11,11 @@ const Create = ({auth,user}) => {
     const { data, setData, post, errors, reset } = useForm({
         name: user.name|| "",
         email: user.email|| "",
-        password: "",
-        password_confirmation:"",
+        password:  "",
+        password_confirmation: "",
         _method:'PUT'
     });
+    
 
     const onSubmit = (e) => {
         e.preventDefault();
@@ -105,7 +106,6 @@ const Create = ({auth,user}) => {
                                         }
                                         className="mt-1 block w-full"
                                         placeholder="Enter User password"
-                                        required
                                     />
                                     {errors.password && (
                                         <div className="text-red-500 text-sm mt-1">
@@ -128,7 +128,6 @@ const Create = ({auth,user}) => {
                                         }
                                         className="mt-1 block w-full"
                                         placeholder="Enter User password_confirmation"
-                                        required
                                     />
                                     {errors.password_confirmation && (
                                         <div className="text-red-500 text-sm mt-1">

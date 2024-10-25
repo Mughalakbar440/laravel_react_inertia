@@ -7,8 +7,14 @@ import TextInput from "@/Components/TextInput";
 import { TASK_STATUS_CLASS_MAP, TASK_STATUS_TEXT_MAP } from "@/constants";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Button } from "@headlessui/react";
 
-const TaskTable = ({ Tasks, querParams = null, hideProjectColums = false }) => {
+const TaskTable = ({
+    Tasks,
+    success,
+    querParams = null,
+    hideProjectColums = false,
+}) => {
     querParams = querParams || {};
     const searchFieldChanged = (name, value) => {
         if (value) {
@@ -36,9 +42,21 @@ const TaskTable = ({ Tasks, querParams = null, hideProjectColums = false }) => {
         }
         router.get(route("task.index", querParams));
     };
+    const deleteuser = (e) => {
+        e.preventDefault;
+        if (!window.confirm("Are you sure want to delete the users?")) {
+            return;
+        }
+        router.delete(route("task.destroy", e.id));
+    };
     return (
         <>
             <div className="overflow-x-auto">
+                {success && (
+                    <div className="bg-emerald-500 text-white font-semibold py-2 px-4 rounded-lg mb-4">
+                        {success}
+                    </div>
+                )}
                 <table className="min-w-full bg-gray-900 border border-gray-700 rounded-lg">
                     <thead>
                         <tr className="bg-gray-800 text-gray-500 uppercase text-sm leading-normal">
@@ -167,12 +185,16 @@ const TaskTable = ({ Tasks, querParams = null, hideProjectColums = false }) => {
                                 </td>
                                 {!hideProjectColums && (
                                     <td className="py-3 px-6 text-center">
-                                    {task.project.name}
+                                        {task.project.name}
                                     </td>
                                 )}
-                                <td className="py-3 px-6 text-center">
-                                    {task.name}
-                                </td>
+                                <th className="py-3 px-6 text-center hover:underline text-white text-nowrap">
+                                    <Link
+                                        href={route("task.show", task.id)}
+                                    >
+                                        {task.name}
+                                    </Link>
+                                </th>
                                 <td className="py-3 px-6 text-center">
                                     <span
                                         className={
@@ -199,12 +221,12 @@ const TaskTable = ({ Tasks, querParams = null, hideProjectColums = false }) => {
                                     >
                                         <FontAwesomeIcon icon={faEdit} />
                                     </Link>
-                                    <Link
-                                        href={route("task.destroy", task.id)}
+                                    <Button
+                                        onClick={(e) => deleteuser(task)}
                                         className="bg-red-500 text-white px-3 py-1 rounded"
                                     >
                                         <FontAwesomeIcon icon={faTrash} />
-                                    </Link>
+                                    </Button>
                                 </td>
                             </tr>
                         ))}

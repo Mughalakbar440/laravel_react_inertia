@@ -40,7 +40,9 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        User::create($request->validated());
+        $data = $request->validated();
+        $data['email_verified_at'] = time();
+        User::create($data);
         return to_route('user.index')->with('success','User Add Successfully');
 
     }
@@ -67,8 +69,13 @@ class UserController extends Controller
      * Update the specified resource in storage.
      */
     public function update(UpdateUserRequest $request, User $user)
-    {
-         $user->update($request->validated());
+    {   
+        $data = $request->validated();
+        $password = $data['password'];
+            if(!$password){
+                unset($data['password']);
+            }
+         $user->update($data);
         return to_route('user.index')->with('success','Data successfully updated');
 
     }

@@ -95,7 +95,8 @@ class ProjectController extends Controller
         return inertia("Project/Show", [
             'project'=>new ProjectResource($project),
             'Tasks' =>   TaskResource::collection($Tasks),
-            "querParams" => request()->query() ?: null
+            "querParams" => request()->query() ?: null,
+            "success"=>session('success')
             ]);
     }
 

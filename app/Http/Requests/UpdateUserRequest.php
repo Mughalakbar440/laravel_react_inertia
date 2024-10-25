@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule; // Correct import of Rule
 
 class UpdateUserRequest extends FormRequest
 {
@@ -19,20 +20,20 @@ class UpdateUserRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-
     public function rules(): array
     {
-        $userId = $this->user()->id; // Get the current user's ID;
+        // Get the current user's ID from the route
+        $userId = $this->route('user');
+
         return [
-            "name" => ["required", "string", "max:255"], // Ensures name is required, a string, and max 255 characters
+            "name" => ["required", "string", "max:255"], // Name validation
             "email" => [
                 "required",
                 "email",
                 "max:255",
-                "unique:users,email," . $userId // Ensure the email is unique, excluding the current user's email
+                Rule::unique('users')->ignore($userId), // Exclude current user from unique email check
             ],
-            "password" => ["nullable", "string", "min:8", "confirmed"], // Password is optional for updates
+            "password" => ["nullable", "string", "min:8", "confirmed"], // Optional password validation
         ];
-        
     }
 }
