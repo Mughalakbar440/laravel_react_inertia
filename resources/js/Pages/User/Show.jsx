@@ -1,4 +1,3 @@
-import { User_STATUS_CLASS_MAP, User_STATUS_TEXT_MAP } from "@/constants";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import React from "react";
@@ -50,16 +49,10 @@ const Show = ({ User, querParams, Tasks }) => {
                                             <span
                                                 className={
                                                     "px-2 py-1 rounded text-white " +
-                                                    User_STATUS_CLASS_MAP[
-                                                        User.status
-                                                    ]
+                                                    User.status
                                                 }
                                             >
-                                                {
-                                                    User_STATUS_TEXT_MAP[
-                                                        User.status
-                                                    ]
-                                                }
+                                                {User.status}
                                             </span>
                                         </p>
                                     </div>
