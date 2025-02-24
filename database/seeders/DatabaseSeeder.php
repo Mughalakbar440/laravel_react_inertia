@@ -18,12 +18,12 @@ class DatabaseSeeder extends Seeder
 
         User::factory()->create([
             'name' => 'Akbar',
-            'email' => 'Akbar@example.com',
-            'password' => bcrypt('123,4,321A'),
+            'email' => 'bhoraniya4429@gmail.com',
+            'password' => bcrypt('Akbar@123'),
             'email_verified_at' => now()->subMinutes(10), // Example: 10 minutes ago
         ]);
         
-        Project::factory()->count(30)->hasTasks(30)->create();
+        //Project::factory()->count(30)->hasTasks(30)->create();
         
     }
 }
